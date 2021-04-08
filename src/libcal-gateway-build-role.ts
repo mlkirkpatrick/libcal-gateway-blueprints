@@ -166,7 +166,12 @@ export class LibCalGatewayBuildRole extends Role {
     // Allow getting needed secrets from SecretsManager
     this.addToPolicy(
       new PolicyStatement({
-        resources: [Fn.sub('arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:/all/libcal-gateway-*')],
+        resources: [
+          Fn.sub('arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:/all/libcal-gateway-*'),
+          ...props.stages.map((stage) =>
+            Fn.sub('arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:/all/contentful/' + stage + '-*'),
+          ),
+        ],
         actions: [
           'secretsmanager:GetSecretValue',
           'secretsmanager:DescribeSecret',
